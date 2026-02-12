@@ -1,5 +1,20 @@
 // Academic Student Reminder Application
 // Main JavaScript File - Enhanced with Working Reminders
+function showBrowserNotification(title, message) {
+    if (Notification.permission === "granted") {
+        new Notification(title, {
+            body: message,
+            icon: "📚",
+            requireInteraction: true
+        });
+    }
+}
+function saveActiveReminders() {
+    localStorage.setItem(
+        "activeReminders",
+        JSON.stringify([...AppState.activeReminders])
+    );
+}
 
 // Application State
 const AppState = {
@@ -15,10 +30,27 @@ const AppState = {
     notificationPermission: false,
     activeReminders: new Set() // Track which reminders have been shown
 };
+// app.js
+
+function requestNotificationPermission() {
+    if ("Notification" in window) {
+        Notification.requestPermission().then(permission => {
+            console.log("Notification permission:", permission);
+        });
+    }
+}
+function onLoginSuccess(user) {
+    loadUserData(user);
+    requestNotificationPermission();   // 👈 ADD HERE
+    startReminderChecker();
+}
+
 
 // Initialize Application
 document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
+    requestNotificationPermission();
+     startReminderChecker();
 });
 
 function initializeApp() {
@@ -188,6 +220,10 @@ function showAuthPage() {
     document.getElementById('authContainer').style.display = 'flex';
     document.querySelector('.app-container').style.display = 'none';
 }
+function startReminderChecker() {
+    setInterval(checkReminders, 60000); // every 1 min
+}
+
 
 function showMainApp() {
     document.getElementById('authContainer').style.display = 'none';
@@ -300,7 +336,13 @@ function initializeSampleData() {
             reminder: 2880 // 2 days before
         }
     ];
-    
+    let AppState = {
+    tasks: [],
+    activeReminders: new Set(
+        JSON.parse(localStorage.getItem("activeReminders") || "[]")
+    )
+};
+
     AppState.exams = [
         {
             id: generateId(),
@@ -794,7 +836,38 @@ function renderCalendar() {
             isCurrentMonth: true
         });
     }
-    
+    function checkReminders() {
+    const now = new Date();
+
+    AppState.tasks.forEach(task => {
+
+        if (!task.reminderTime) return;
+
+        const reminderTime = new Date(task.reminderTime);
+        const timeDiff = now - reminderTime;
+
+        const isTimeToRemind =
+            timeDiff >= 0 && timeDiff < 120000; // 2-min window
+
+        const reminderKey = task.id + "_reminded";
+
+        if (isTimeToRemind && !AppState.activeReminders.has(reminderKey)) {
+
+            // 🔔 In-app notification
+            showInAppNotification(task.title);
+
+            // 🌐 Browser notification
+            showBrowserNotification(
+                "Reminder",
+                `${task.title} is due soon!`
+            );
+
+            AppState.activeReminders.add(reminderKey);
+            saveActiveReminders();
+        }
+    });
+}
+
     // Next month dates
     const remainingDays = 42 - dates.length;
     for (let i = 1; i <= remainingDays; i++) {
@@ -1312,7 +1385,7 @@ function checkReminders() {
     
     allItems.forEach(item => {
         // Skip if no reminder or already completed
-        if (!item.reminder || (item.completed)) return;
+        if ((!item.reminder) || (item.completed)) return;
         
         // Skip if already reminded for this item
         if (AppState.activeReminders.has(item.id)) return;
