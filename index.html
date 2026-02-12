@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Student Reminder</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;600;700&family=Crimson+Pro:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">📚</div>
+                <h1>Academic<br>Student Reminder</h1>
+            </div>
+            
+            <div class="user-profile">
+                <div class="avatar">JD</div>
+                <div class="user-info">
+                    <span class="user-name" id="userName">John Doe</span>
+                    <span class="user-email">Student</span>
+                </div>
+            </div>
+
+            <ul class="nav-menu">
+                <li class="nav-item active" data-page="dashboard">
+                    <span class="nav-icon">🏠</span>
+                    <span>Dashboard</span>
+                </li>
+                <li class="nav-item" data-page="tasks">
+                    <span class="nav-icon">✓</span>
+                    <span>Tasks for Today</span>
+                </li>
+                <li class="nav-item" data-page="assignments">
+                    <span class="nav-icon">📝</span>
+                    <span>Assignments</span>
+                </li>
+                <li class="nav-item" data-page="exams">
+                    <span class="nav-icon">📖</span>
+                    <span>Examinations</span>
+                </li>
+                <li class="nav-item" data-page="projects">
+                    <span class="nav-icon">🎯</span>
+                    <span>Project Deadlines</span>
+                </li>
+                <li class="nav-item" data-page="events">
+                    <span class="nav-icon">🎓</span>
+                    <span>Institutional Events</span>
+                </li>
+                <li class="nav-item" data-page="calendar">
+                    <span class="nav-icon">📅</span>
+                    <span>Calendar</span>
+                </li>
+                <li class="nav-item" data-page="progress">
+                    <span class="nav-icon">📊</span>
+                    <span>Progress Tracking</span>
+                </li>
+            </ul>
+
+            <button class="logout-btn" id="logoutBtn">
+                <span>🚪</span>
+                Logout
+            </button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <h2 id="pageTitle">Dashboard</h2>
+                    <p id="pageSubtitle">Welcome back, ready to conquer your day?</p>
+                </div>
+                <div class="header-right">
+                    <div class="search-bar">
+                        <input type="text" placeholder="Search reminders..." id="searchInput">
+                    </div>
+                    <button class="notification-btn" id="notificationBtn">
+                        <span>🔔</span>
+                        <span class="badge" id="notificationBadge">3</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content Pages -->
+            <div class="content-wrapper">
+                <!-- Dashboard Page -->
+                <div class="page active" id="dashboard-page">
+                    <div class="stats-grid">
+                        <div class="stat-card urgent">
+                            <div class="stat-icon">⚠️</div>
+                            <div class="stat-content">
+                                <h3 id="urgentCount">5</h3>
+                                <p>Urgent Tasks</p>
+                            </div>
+                        </div>
+                        <div class="stat-card upcoming">
+                            <div class="stat-icon">📅</div>
+                            <div class="stat-content">
+                                <h3 id="upcomingCount">12</h3>
+                                <p>Upcoming Events</p>
+                            </div>
+                        </div>
+                        <div class="stat-card completed">
+                            <div class="stat-icon">✓</div>
+                            <div class="stat-content">
+                                <h3 id="completedCount">34</h3>
+                                <p>Completed</p>
+                            </div>
+                        </div>
+                        <div class="stat-card progress">
+                            <div class="stat-icon">📈</div>
+                            <div class="stat-content">
+                                <h3 id="progressPercent">78%</h3>
+                                <p>Overall Progress</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-content">
+                        <div class="today-section">
+                            <h3>Today's Priority Tasks</h3>
+                            <div class="task-list" id="todayTasks"></div>
+                        </div>
+
+                        <div class="quick-actions">
+                            <h3>Quick Actions</h3>
+                            <div class="action-buttons">
+                                <button class="action-btn" data-action="add-task">
+                                    <span>➕</span>
+                                    <span>Add Task</span>
+                                </button>
+                                <button class="action-btn" data-action="add-assignment">
+                                    <span>📝</span>
+                                    <span>New Assignment</span>
+                                </button>
+                                <button class="action-btn" data-action="add-exam">
+                                    <span>📖</span>
+                                    <span>Schedule Exam</span>
+                                </button>
+                                <button class="action-btn" data-action="add-event">
+                                    <span>🎓</span>
+                                    <span>Add Event</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="upcoming-preview">
+                        <h3>This Week's Schedule</h3>
+                        <div class="timeline" id="weekTimeline"></div>
+                    </div>
+                </div>
+
+                <!-- Tasks Page -->
+                <div class="page" id="tasks-page">
+                    <div class="page-actions">
+                        <button class="primary-btn" id="addTaskBtn">
+                            <span>➕</span> Add New Task
+                        </button>
+                        <select class="filter-select" id="taskFilter">
+                            <option value="all">All Tasks</option>
+                            <option value="pending">Pending</option>
+                            <option value="completed">Completed</option>
+                            <option value="overdue">Overdue</option>
+                        </select>
+                    </div>
+                    <div class="tasks-container" id="tasksContainer"></div>
+                </div>
+
+                <!-- Assignments Page -->
+                <div class="page" id="assignments-page">
+                    <div class="page-actions">
+                        <button class="primary-btn" id="addAssignmentBtn">
+                            <span>➕</span> Add New Assignment
+                        </button>
+                        <select class="filter-select" id="assignmentFilter">
+                            <option value="all">All Assignments</option>
+                            <option value="pending">Pending</option>
+                            <option value="submitted">Submitted</option>
+                            <option value="graded">Graded</option>
+                        </select>
+                    </div>
+                    <div class="assignments-grid" id="assignmentsGrid"></div>
+                </div>
+
+                <!-- Exams Page -->
+                <div class="page" id="exams-page">
+                    <div class="page-actions">
+                        <button class="primary-btn" id="addExamBtn">
+                            <span>➕</span> Schedule New Exam
+                        </button>
+                    </div>
+                    <div class="exams-list" id="examsList"></div>
+                </div>
+
+                <!-- Projects Page -->
+                <div class="page" id="projects-page">
+                    <div class="page-actions">
+                        <button class="primary-btn" id="addProjectBtn">
+                            <span>➕</span> Add New Project
+                        </button>
+                    </div>
+                    <div class="projects-grid" id="projectsGrid"></div>
+                </div>
+
+                <!-- Events Page -->
+                <div class="page" id="events-page">
+                    <div class="page-actions">
+                        <button class="primary-btn" id="addEventBtn">
+                            <span>➕</span> Add New Event
+                        </button>
+                    </div>
+                    <div class="events-list" id="eventsList"></div>
+                </div>
+
+                <!-- Calendar Page -->
+                <div class="page" id="calendar-page">
+                    <div class="calendar-header">
+                        <button class="calendar-nav" id="prevMonth">‹</button>
+                        <h3 id="currentMonth">February 2026</h3>
+                        <button class="calendar-nav" id="nextMonth">›</button>
+                    </div>
+                    <div class="calendar-grid" id="calendarGrid"></div>
+                    <div class="calendar-events" id="calendarEvents"></div>
+                </div>
+
+                <!-- Progress Page -->
+                <div class="page" id="progress-page">
+                    <div class="progress-overview">
+                        <div class="progress-card">
+                            <h3>Academic Performance</h3>
+                            <canvas id="performanceChart"></canvas>
+                        </div>
+                        <div class="progress-card">
+                            <h3>Task Completion Rate</h3>
+                            <canvas id="completionChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="stats-detailed">
+                        <h3>Detailed Statistics</h3>
+                        <div id="detailedStats"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for Adding/Editing Items -->
+    <div class="modal" id="itemModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add New Task</h3>
+                <button class="modal-close" id="modalClose">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="itemForm">
+                    <input type="hidden" id="itemId">
+                    <input type="hidden" id="itemType">
+                    
+                    <div class="form-group">
+                        <label for="itemTitle">Title *</label>
+                        <input type="text" id="itemTitle" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="itemDescription">Description</label>
+                        <textarea id="itemDescription" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="itemDate">Due Date *</label>
+                            <input type="datetime-local" id="itemDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="itemPriority">Priority</label>
+                            <select id="itemPriority">
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                                <option value="urgent">Urgent</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="categoryGroup">
+                        <label for="itemCategory">Category</label>
+                        <input type="text" id="itemCategory" placeholder="e.g., Mathematics, Physics">
+                    </div>
+
+                    <div class="form-group" id="reminderGroup">
+                        <label for="itemReminder">Reminder Before</label>
+                        <select id="itemReminder">
+                            <option value="0">No reminder</option>
+                            <option value="15">15 minutes</option>
+                            <option value="30">30 minutes</option>
+                            <option value="60">1 hour</option>
+                            <option value="1440">1 day</option>
+                            <option value="2880">2 days</option>
+                            <option value="10080">1 week</option>
+                        </select>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="secondary-btn" id="cancelBtn">Cancel</button>
+                        <button type="submit" class="primary-btn">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Panel -->
+    <div class="notification-panel" id="notificationPanel">
+        <div class="notification-header">
+            <h3>Notifications</h3>
+            <button id="clearNotifications">Clear All</button>
+        </div>
+        <div class="notification-list" id="notificationList"></div>
+    </div>
+
+    <!-- Login Page -->
+    <div class="auth-container" id="authContainer">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-logo">📚</div>
+                <h1>Academic Student Reminder</h1>
+                <p>Stay organized, never miss a deadline</p>
+            </div>
+            <form id="loginForm" class="auth-form">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required placeholder="your.email@university.edu">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required placeholder="Enter your password">
+                </div>
+                <button type="submit" class="primary-btn full-width">Sign In</button>
+                <p class="auth-switch">Don't have an account? <a href="#" id="showRegister">Register</a></p>
+            </form>
+            <form id="registerForm" class="auth-form" style="display: none;">
+                <div class="form-group">
+                    <label for="registerName">Full Name</label>
+                    <input type="text" id="registerName" required placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" required placeholder="your.email@university.edu">
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" required placeholder="Create a password">
+                </div>
+                <div class="form-group">
+                    <label for="registerConfirm">Confirm Password</label>
+                    <input type="password" id="registerConfirm" required placeholder="Confirm your password">
+                </div>
+                <button type="submit" class="primary-btn full-width">Create Account</button>
+                <p class="auth-switch">Already have an account? <a href="#" id="showLogin">Sign In</a></p>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
